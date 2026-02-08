@@ -18,3 +18,7 @@ It also contains instructions related to modifying your buildroot project to use
 ### Work log (hash + date)
 - `1e30a17` — 2026-02-07 — Baseline repository state with buildroot submodule registration.
 - `f476c87` — 2026-02-07 — Added external package integration, finder test script behavior updates, and assignment automation/report artifacts.
+
+### Codex Links 
+- https://chatgpt.com/s/cd_6988e182765481918665af7ac1d1c7d8
+- https://chatgpt.com/s/cd_6988e1a16a8881919da4206b075fa46d
