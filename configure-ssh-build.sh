@@ -12,7 +12,13 @@ export BR2_DL_DIR="${HOME}/.dl"
 export BR2_CCACHE_DIR="${HOME}/.buildroot-ccache"
 
 if [ ! -f buildroot/.config ]; then
-    make -C buildroot defconfig BR2_EXTERNAL=${EXTERNAL_REL_BUILDROOT} BR2_DEFCONFIG=${AESD_MODIFIED_DEFCONFIG_REL_BUILDROOT}
+    if [ -e "${AESD_MODIFIED_DEFCONFIG}" ]; then
+        echo "USING ${AESD_MODIFIED_DEFCONFIG}"
+        make -C buildroot defconfig BR2_EXTERNAL=${EXTERNAL_REL_BUILDROOT} BR2_DEFCONFIG=${AESD_MODIFIED_DEFCONFIG_REL_BUILDROOT}
+    else
+        echo "No modified defconfig found, using default ${AESD_DEFAULT_DEFCONFIG}"
+        make -C buildroot defconfig BR2_EXTERNAL=${EXTERNAL_REL_BUILDROOT} BR2_DEFCONFIG=${AESD_DEFAULT_DEFCONFIG}
+    fi
 fi
 
 make -C buildroot menuconfig BR2_EXTERNAL=${EXTERNAL_REL_BUILDROOT}

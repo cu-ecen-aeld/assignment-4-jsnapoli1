@@ -1,28 +1,67 @@
 #!/bin/sh
+# Tester script for assignment 1 and assignment 2
+# Modified for target rootfs paths: executables on PATH, conf in /etc/finder-app/conf
 
-# Pseudocode Block 6: make this test script path-independent.
-# - Assume required executables are on PATH.
-# - Assume configuration lives at /etc/finder-app/conf.
-# - Save finder command output in /tmp/assignment4-result.txt for grading.
-set -eu
+set -e
+set -u
 
-OUTPUT_FILE="/tmp/assignment4-result.txt"
-SEARCH_DIR="/etc/finder-app/conf"
-SEARCH_STR="${1:-writer}"
+NUMFILES=10
+WRITESTR=AELD_IS_FUN
+WRITEDIR=/tmp/aeld-data
+username=$(cat /etc/finder-app/conf/username.txt)
 
-# Clarifying note: command -v gives a portable executable presence check in POSIX shells.
-for required_cmd in finder.sh writer tester.sh; do
-    command -v "${required_cmd}" >/dev/null 2>&1 || {
-        echo "ERROR: ${required_cmd} must be available in PATH" >&2
-        exit 1
-    }
+if [ $# -lt 3 ]
+then
+	echo "Using default value ${WRITESTR} for string to write"
+	if [ $# -lt 1 ]
+	then
+		echo "Using default value ${NUMFILES} for number of files to write"
+	else
+		NUMFILES=$1
+	fi
+else
+	NUMFILES=$1
+	WRITESTR=$2
+	WRITEDIR=/tmp/aeld-data/$3
+fi
+
+MATCHSTR="The number of files are ${NUMFILES} and the number of matching lines are ${NUMFILES}"
+
+echo "Writing ${NUMFILES} files containing string ${WRITESTR} to ${WRITEDIR}"
+
+rm -rf "${WRITEDIR}"
+
+assignment=$(cat /etc/finder-app/conf/assignment.txt)
+
+if [ $assignment != 'assignment1' ]
+then
+	mkdir -p "$WRITEDIR"
+
+	if [ -d "$WRITEDIR" ]
+	then
+		echo "$WRITEDIR created"
+	else
+		exit 1
+	fi
+fi
+
+for i in $( seq 1 $NUMFILES)
+do
+	writer "$WRITEDIR/${username}$i.txt" "$WRITESTR"
 done
 
-# Run finder and mirror output both to terminal and to the required result file.
-finder.sh "${SEARCH_DIR}" "${SEARCH_STR}" | tee "${OUTPUT_FILE}"
+OUTPUTSTRING=$(finder.sh "$WRITEDIR" "$WRITESTR")
+echo "${OUTPUTSTRING}" > /tmp/assignment4-result.txt
 
-# Exercise writer to verify target-cross-compiled binary is functional.
-writer /tmp/assignment4-writer-test.txt "writer executed from finder-test.sh"
+# remove temporary directories
+rm -rf /tmp/aeld-data
 
-# Run the existing tester script against config path for consistency.
-tester.sh "${SEARCH_DIR}" "${SEARCH_STR}"
+set +e
+echo ${OUTPUTSTRING} | grep "${MATCHSTR}"
+if [ $? -eq 0 ]; then
+	echo "success"
+	exit 0
+else
+	echo "failed: expected  ${MATCHSTR} in ${OUTPUTSTRING} but instead found"
+	exit 1
+fi

@@ -7,7 +7,7 @@
 # Pseudocode Block 3: define where Buildroot fetches assignment sources.
 # - Pin to a specific commit for reproducible builds.
 # - Use the SSH URL required by assignment infrastructure.
-AESD_ASSIGNMENTS_VERSION = a0d65a85f81160f77f237803ce27e9c82f0d7d89
+AESD_ASSIGNMENTS_VERSION = fa6231e85ac2f4a0884cbe698cca3481f92f54c0
 AESD_ASSIGNMENTS_SITE = git@github.com:cu-ecen-aeld/assignments-3-and-later-jsnapoli1.git
 AESD_ASSIGNMENTS_SITE_METHOD = git
 AESD_ASSIGNMENTS_GIT_SUBMODULES = YES
@@ -28,7 +28,6 @@ define AESD_ASSIGNMENTS_INSTALL_TARGET_CMDS
 	$(INSTALL) -d $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 0755 $(@D)/finder-app/writer $(TARGET_DIR)/usr/bin/writer
 	$(INSTALL) -m 0755 $(@D)/finder-app/finder.sh $(TARGET_DIR)/usr/bin/finder.sh
-	$(INSTALL) -m 0755 $(@D)/finder-app/tester.sh $(TARGET_DIR)/usr/bin/tester.sh
 	$(INSTALL) -m 0755 $(BR2_EXTERNAL_project_base_PATH)/package/aesd-assignments/finder-test.sh $(TARGET_DIR)/usr/bin/finder-test.sh
 endef
 
